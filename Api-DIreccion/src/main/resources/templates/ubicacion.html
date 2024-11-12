@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubicación por intersección</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="bg-secondary-subtle container-lg">
+        <h1 class="text-primary text-center bg-warning-subtle m-2 p-2">Ubicación por cruce</h1>
+        <form class="bg-success-subtle m-5 p-4">
+            <!-- Calle 1 -->
+            <div class="mb-3 row">
+                <label for="calle1" class="col-sm-3 col-form-label text-primary">Calle 1</label>
+                <div class="col-sm-9">
+                    <input type="text" id="calle1" required minlength="3" maxlength="25"
+                        class="form-control text-primary bg-primary-subtle p-2">
+                </div>
+            </div>
+
+            <!-- Calle 2 -->
+            <div class="mb-3 row">
+                <label for="calle2" class="col-sm-3 col-form-label text-primary">Calle 2</label>
+                <div class="col-sm-9">
+                    <input type="text" id="calle2" required minlength="3" maxlength="25"
+                        class="form-control text-primary bg-primary-subtle p-2">
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="mb-3 row">
+                <button type="button" class="btn btn-success col-sm-3 m-2 p-2" onclick="interseccion()">Enviar</button>
+                <button type="reset" class="btn btn-danger col-sm-3 m-2 p-2">Borrar</button>
+            </div>
+
+            <!-- Área para mostrar los resultados -->
+            <div id="resultado" class="text text-primary"></div>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        function interseccion() {
+            // Obtener las calles desde los campos de entrada
+            let calle1 = document.getElementById("calle1").value;
+            let calle2 = document.getElementById("calle2").value;
+
+            // Validar que ambos campos no estén vacíos
+            if (!calle1 || !calle2) {
+                alert("Por favor ingrese ambas calles.");
+                return;
+            }
+
+            // Construir la URL de la API
+            let url = `http://servicios.usig.buenosaires.gob.ar/normalizar/?direccion=${encodeURIComponent(calle1)}%20y%20${encodeURIComponent(calle2)}`;
+
+            // Realizar la solicitud GET utilizando Axios
+            axios.get(url)
+                .then(function(response) {
+                    // Verificar si la respuesta contiene datos
+                    if (response.data) {
+                        document.getElementById("resultado").innerHTML = `Dirección normalizada: ${response.data}`;
+                    } else {
+                        document.getElementById("resultado").innerHTML = "No se encontraron resultados para esta intersección.";
+                    }
+                })
+                .catch(function(error) {
+                    // Manejar cualquier error en la solicitud
+                    console.error("Hubo un error al realizar la solicitud:", error);
+                    alert("Ocurrió un error al obtener la información.");
+                });
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
